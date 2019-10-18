@@ -1,0 +1,28 @@
+extends layout
+
+block content
+    h1= title
+    .container
+        input(type='textarea' id = 'text')
+        button(id='btn') Отправить
+    #output
+        ul(id='list')
+block scripts
+    script(type='text/javascript' src='/socket.io/socket.io.js')
+    script.
+      let socket = io.connect('http://localhost:3000');
+
+      let text = document.getElementById('text');
+      let btn = document.getElementById('btn');
+      let output = document.getElementById('list');
+
+      btn.addEventListener('click', function () {
+        socket.emit('send', text.value)
+      })
+
+      socket.on('result', function (data) {
+        output.innerHTML = '';
+        for (let value of data) {
+          output.innerHTML += `<li>${value[0]} : ${value[1]}</li>`
+        }
+      })
